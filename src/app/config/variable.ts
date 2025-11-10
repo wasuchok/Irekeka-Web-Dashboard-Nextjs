@@ -1,0 +1,1 @@
+export const IMAGE_URL = "http://10.17.2.3/IREKEKA/"
