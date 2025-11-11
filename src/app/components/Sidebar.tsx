@@ -12,8 +12,7 @@ import {
     FiChevronRight,
     FiHome,
     FiLogOut,
-    FiMenu,
-    FiSettings
+    FiMenu
 } from "react-icons/fi";
 
 const menuItems = [
@@ -27,7 +26,6 @@ const menuItems = [
         subMenu: [],
     },
     { label: "Stock Center", icon: <FiCalendar />, href: "/stock/view" },
-    { label: "System Settings", icon: <FiSettings />, href: "/settings" },
 ];
 
 export default function Sidebar() {

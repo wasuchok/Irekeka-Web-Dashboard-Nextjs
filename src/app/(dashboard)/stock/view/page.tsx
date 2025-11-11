@@ -1,7 +1,7 @@
 "use client";
 
-import ModalDetail from "@/app/components/report/ModalDetail";
 import { ScrollableTable } from "@/app/components/report/table";
+import ModalDetail from "@/app/components/stock/ModalDetail";
 import { IMAGE_URL } from "@/app/config/variable";
 import { apiPublic } from "@/app/services/httpClient";
 import dynamic from "next/dynamic";
@@ -17,7 +17,7 @@ interface ApiResponse<T> {
 }
 
 const SearchDynamicHeader = dynamic(
-    () => import("@/app/components/report/SearchHeader"),
+    () => import("@/app/components/stock/SearchHeader"),
     { ssr: false }
 );
 
