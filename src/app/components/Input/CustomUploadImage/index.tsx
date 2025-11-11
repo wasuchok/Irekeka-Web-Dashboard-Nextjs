@@ -12,6 +12,8 @@ interface CustomUploadImageProps {
     isLoading?: boolean;
 }
 
+const FALLBACK_IMAGE_SRC = "/file.svg";
+
 const CustomUploadImage: React.FC<CustomUploadImageProps> = ({
     onFileChange,
     className = "",
@@ -21,10 +23,15 @@ const CustomUploadImage: React.FC<CustomUploadImageProps> = ({
     isLoading = false,
 }) => {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [hasLoadError, setHasLoadError] = useState(false);
 
     useEffect(() => {
         if (defaultImageUrl) {
             setPreviewUrl(defaultImageUrl);
+            setHasLoadError(false);
+        } else {
+            setPreviewUrl(null);
+            setHasLoadError(false);
         }
     }, [defaultImageUrl]);
 
@@ -33,6 +40,7 @@ const CustomUploadImage: React.FC<CustomUploadImageProps> = ({
             if (acceptedFiles && acceptedFiles.length > 0) {
                 const file = acceptedFiles[0];
                 setPreviewUrl(URL.createObjectURL(file));
+                setHasLoadError(false);
                 onFileChange(file);
             }
         },
@@ -54,7 +62,14 @@ const CustomUploadImage: React.FC<CustomUploadImageProps> = ({
     const handleRemove = (e: React.MouseEvent) => {
         e.stopPropagation();
         setPreviewUrl(null);
+        setHasLoadError(false);
         onFileChange(null);
+    };
+
+    const handleImageError = () => {
+        if (hasLoadError) return;
+        setHasLoadError(true);
+        setPreviewUrl(FALLBACK_IMAGE_SRC);
     };
 
     return (
@@ -101,7 +116,13 @@ const CustomUploadImage: React.FC<CustomUploadImageProps> = ({
                             src={previewUrl}
                             alt="รูปภาพตัวอย่าง"
                             className="max-h-40 rounded-md object-contain"
+                            onError={handleImageError}
                         />
+                        {hasLoadError && (
+                            <span className="absolute bottom-2 left-2 rounded-md bg-white/80 px-2 py-1 text-xs font-semibold text-red-600 shadow-sm">
+                                Showing fallback image
+                            </span>
+                        )}
                         <button
                             type="button"
                             onClick={handleRemove}

@@ -17,6 +17,17 @@ const normalizeImageSource = (value: any) => {
     return undefined;
 };
 
+const appendBaseImageUrl = (relativePath?: string) => {
+    if (!relativePath) return undefined;
+    const sanitizedPath = relativePath.trim();
+    if (!sanitizedPath) return undefined;
+    if (/^https?:\/\//i.test(sanitizedPath)) return sanitizedPath;
+
+    const trimmedBase = IMAGE_URL.replace(/\/+$/, "");
+    const trimmedPath = sanitizedPath.replace(/^\/+/, "");
+    return `${trimmedBase}/${trimmedPath}`;
+};
+
 const ModalDetail = ({ isOpen, onClose, data }: any) => {
 
     const options = [
@@ -54,12 +65,14 @@ const ModalDetail = ({ isOpen, onClose, data }: any) => {
         }
     }, [data, reset])
 
-    const primaryImageUrl = normalizeImageSource(
+    const primaryImagePath = normalizeImageSource(
         data?.img_1 ?? data?.image_one ?? data?.image1 ?? data?.images?.[0]
     );
-    const secondaryImageUrl = normalizeImageSource(
+    const secondaryImagePath = normalizeImageSource(
         data?.img_2 ?? data?.image_two ?? data?.image2 ?? data?.images?.[1]
     );
+    const primaryImageUrl = appendBaseImageUrl(primaryImagePath);
+    const secondaryImageUrl = appendBaseImageUrl(secondaryImagePath);
 
     return (
         <>
@@ -122,7 +135,7 @@ const ModalDetail = ({ isOpen, onClose, data }: any) => {
                                     <CustomUploadImage
                                         onFileChange={field.onChange}
                                         error={fieldState.error?.message}
-                                        defaultImageUrl={`${IMAGE_URL}${primaryImageUrl}`}
+                                        defaultImageUrl={primaryImageUrl}
                                     />
                                 </div>
                             )}
@@ -136,7 +149,7 @@ const ModalDetail = ({ isOpen, onClose, data }: any) => {
                                     <CustomUploadImage
                                         onFileChange={field.onChange}
                                         error={fieldState.error?.message}
-                                        defaultImageUrl={`${IMAGE_URL}${secondaryImageUrl}`}
+                                        defaultImageUrl={secondaryImageUrl}
                                     />
                                 </div>
                             )}
@@ -150,4 +163,3 @@ const ModalDetail = ({ isOpen, onClose, data }: any) => {
 }
 
 export default ModalDetail
-

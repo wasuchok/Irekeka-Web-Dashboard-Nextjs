@@ -2,6 +2,7 @@
 
 import ModalDetail from "@/app/components/report/ModalDetail";
 import { ScrollableTable } from "@/app/components/report/table";
+import { IMAGE_URL } from "@/app/config/variable";
 import { apiPublic } from "@/app/services/httpClient";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
@@ -92,6 +93,35 @@ export default function Page() {
             width: "60px",
         },
         {
+            header: "Image",
+            accessor: "img_1",
+            width: "140px",
+            render: (value: string, data: any) => {
+                const images = [value, data.img_2].filter(Boolean);
+                if (images.length === 0) {
+                    return (
+                        <div className="w-20 h-16 bg-gray-100 flex items-center justify-center rounded">
+                            <span className="text-gray-400 text-xs">No image</span>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="flex gap-2">
+                        {images.map((img: string, index: number) => (
+                            <img
+                                key={index}
+                                src={`${IMAGE_URL}${img}`}
+                                alt={`Equipment ${index + 1}`}
+                                className="w-16 h-16 object-cover rounded border border-gray-200"
+                            />
+                        ))}
+                    </div>
+                );
+            },
+        },
+
+        {
             header: "Code",
             accessor: "equipment_code",
             width: "150px",
@@ -110,8 +140,6 @@ export default function Page() {
             header: "Status",
             accessor: "status",
             width: "120px",
-
-
             render: (value: string) => {
                 const isInStock = value === "in-stock";
                 return (
@@ -130,8 +158,6 @@ export default function Page() {
             header: "Create Date",
             accessor: "create_date",
             width: "180px",
-
-
             render: (value: string) => {
                 if (!value) return "-";
                 return new Date(value).toLocaleDateString("en-GB", {
@@ -139,15 +165,16 @@ export default function Page() {
                     month: "2-digit",
                     year: "numeric",
                 });
-            }
+            },
         },
     ];
+
 
 
     return (
         <div className="flex flex-col rounded-2xl border border-gray-100 bg-white p-4 shadow-sm ">
 
-            <div className="z-50">
+            <div className="z-20">
                 <SearchDynamicHeader
                     onSearch={handleSearch}
                     onReset={handleReset}
