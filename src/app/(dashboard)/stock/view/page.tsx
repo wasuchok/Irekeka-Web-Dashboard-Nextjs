@@ -5,7 +5,16 @@ import { ScrollableTable } from "@/app/components/report/table";
 import { IMAGE_URL } from "@/app/config/variable";
 import { apiPublic } from "@/app/services/httpClient";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ReactSwitch from "react-switch";
+
+interface ApiResponse<T> {
+    success: boolean;
+    data: T;
+    message?: string;
+    error?: string;
+}
 
 const SearchDynamicHeader = dynamic(
     () => import("@/app/components/report/SearchHeader"),
@@ -13,10 +22,13 @@ const SearchDynamicHeader = dynamic(
 );
 
 export default function Page() {
+    const router = useRouter();
     const [openModalDetail, setOpenModalDetail] = useState(false)
     const [stocks, setStocks] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [detail, setDetail] = useState<any>(null);
+    const [enUpdating, setEnUpdating] = useState<Record<string, boolean>>({});
+    const [rowDeleting, setRowDeleting] = useState<Record<string, boolean>>({});
     const [pagination, setPagination] = useState({
         totalPages: 1,
         currentPage: 1,
@@ -30,7 +42,7 @@ export default function Page() {
             accessor: "type",
             header: "Type",
             type: "dropdown",
-            enumValues: ["Computer", "Equipment", "Accessory", "Phone/Camera", "Other"],
+            enumValues: ["Computer", "Equipment", "Accessory", "Phone/Camera", "Audio", "Other"],
         },
         {
             accessor: "status",
@@ -79,12 +91,108 @@ export default function Page() {
         fetchStocks();
     };
 
-    const handleCreate = () => alert("🟢 Create clicked");
+    const handleCreate = () => router.push("/stock/create");
+
+    const handleModalClose = () => {
+        setOpenModalDetail(false);
+        setDetail(null);
+    };
+
+    const handleStockUpdated = (updated: any) => {
+        const previousCode = detail?.equipment_code;
+
+        if (!updated || !previousCode) {
+            setOpenModalDetail(false);
+            return;
+        }
+
+        setStocks((prev) => {
+            let hasMatch = false;
+
+            const next = prev.map((stock) => {
+                if (stock.equipment_code === previousCode) {
+                    hasMatch = true;
+                    return { ...stock, ...updated };
+                }
+
+                return stock;
+            });
+
+            return hasMatch ? next : prev;
+        });
+        setDetail(updated);
+        setOpenModalDetail(false);
+    };
 
 
     useEffect(() => {
         fetchStocks();
     }, []);
+
+    const handleToggleEn = async (stock: any) => {
+        const code = stock?.equipment_code;
+        if (!code) return;
+
+        const nextValue = stock.en ? 0 : 1;
+        setEnUpdating((prev) => ({ ...prev, [code]: true }));
+
+        try {
+            const { data: response } = await apiPublic.patch<ApiResponse<any>>(
+                `/stock/${encodeURIComponent(code)}/status`,
+                { en: nextValue }
+            );
+
+            if (response?.success) {
+                const updated = response.data;
+                setStocks((prev) =>
+                    prev.map((item) =>
+                        item.equipment_code === code
+                            ? { ...item, en: updated?.en ?? nextValue, status: updated?.status ?? item.status }
+                            : item
+                    )
+                );
+            }
+        } catch (error) {
+            console.error("Toggle EN failed:", error);
+        } finally {
+            setEnUpdating((prev) => {
+                const { [code]: _, ...rest } = prev;
+                return rest;
+            });
+        }
+    };
+
+    const handleDeleteStock = async (stock: any) => {
+        const code = stock?.equipment_code;
+        if (!code) return;
+        if (rowDeleting[code]) return;
+
+        const confirmed = typeof window !== "undefined" ? window.confirm("ยืนยันการลบข้อมูลนี้หรือไม่?") : true;
+        if (!confirmed) return;
+
+        setRowDeleting((prev) => ({ ...prev, [code]: true }));
+
+        try {
+            const { data: response } = await apiPublic.delete<ApiResponse<null>>(
+                `/stock/${encodeURIComponent(code)}`
+            );
+
+            if (response?.success) {
+                setStocks((prev) => prev.filter((item) => item.equipment_code !== code));
+                if (detail?.equipment_code === code) {
+                    setDetail(null);
+                    setOpenModalDetail(false);
+                }
+            }
+        } catch (error) {
+            console.error("Delete stock failed:", error);
+        } finally {
+            setRowDeleting((prev) => {
+                const { [code]: _, ...rest } = prev;
+                return rest;
+            });
+        }
+    };
 
     const columns: any[] = [
         {
@@ -155,6 +263,37 @@ export default function Page() {
             },
         },
         {
+            header: "Enable",
+            accessor: "en",
+            width: "140px",
+            render: (_: string, row: any) => {
+                const code = row?.equipment_code;
+                const loading = Boolean(code && enUpdating[code]);
+
+                return (
+                    <div className="flex items-center gap-2">
+                        <ReactSwitch
+                            onChange={() => handleToggleEn(row)}
+                            checked={Boolean(row.en)}
+                            disabled={loading}
+                            onColor="#34d399"
+                            offColor="#d1d5db"
+                            onHandleColor="#10b981"
+                            offHandleColor="#6b7280"
+                            handleDiameter={18}
+                            uncheckedIcon={false}
+                            checkedIcon={false}
+                            height={24}
+                            width={46}
+                        />
+                        <span className="text-xs font-semibold text-gray-600">
+                            {row.en ? "ON" : "OFF"}
+                        </span>
+                    </div>
+                );
+            },
+        },
+        {
             header: "Create Date",
             accessor: "create_date",
             width: "180px",
@@ -200,12 +339,18 @@ export default function Page() {
 
                     }
                     }
+                    onDelete={handleDeleteStock}
                 />
             </div>
 
 
             {openModalDetail && (
-                <ModalDetail data={detail} isOpen={openModalDetail} onClose={() => setOpenModalDetail(false)} />
+                <ModalDetail
+                    data={detail}
+                    isOpen={openModalDetail}
+                    onClose={handleModalClose}
+                    onUpdated={handleStockUpdated}
+                />
             )}
         </div>
     );

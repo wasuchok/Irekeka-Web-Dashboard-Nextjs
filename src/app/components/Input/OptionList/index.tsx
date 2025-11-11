@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import Select from "react-select";
 
 interface OptionListProps {
@@ -12,6 +13,7 @@ interface OptionListProps {
     isLoading?: boolean;
     isEditLoading?: boolean;
     error?: string;
+    instanceId?: string;
 }
 
 export default function OptionList({
@@ -24,9 +26,12 @@ export default function OptionList({
     isLoading = false,
     isEditLoading = false,
     error,
+    instanceId,
 }: OptionListProps) {
     const selectedOption = options.find((opt) => opt.value === value) || null;
     const isActuallyLoading = isLoading || isEditLoading;
+    const generatedId = useId();
+    const selectInstanceId = instanceId ?? generatedId;
 
     return (
         <div className="flex flex-col gap-1 relative">
@@ -39,6 +44,8 @@ export default function OptionList({
 
             <div className="relative">
                 <Select
+                    instanceId={selectInstanceId}
+                    inputId={`${selectInstanceId}-input`}
                     options={options}
                     value={selectedOption}
                     onChange={(selected) => onChange(selected ? selected.value : "")}
