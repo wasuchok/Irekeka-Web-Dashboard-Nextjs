@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { FiBell, FiPlus, FiSearch } from "react-icons/fi";
-import { IMAGE_URL } from "../config/variable";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const formatClock = (date: Date) =>
     new Intl.DateTimeFormat("en-GB", {
@@ -61,11 +60,14 @@ export default function HeaderBar() {
             </div>
 
             <div className="flex items-center gap-3">
-                <div className="relative flex items-center justify-center">
-                    <img
-                        src={`${IMAGE_URL}/emp_pic/660042.jpg`}
-                        alt="avatar"
-                        className="rounded-full w-10 h-10 border border-gray-200 object-cover"
+                <div className="relative h-10 w-10 overflow-hidden rounded-full border border-gray-200 bg-gray-50">
+                    <Image
+                        src="/emp.png"
+                        alt="User avatar"
+                        fill
+                        sizes="40px"
+                        priority
+                        className="object-cover"
                     />
                 </div>
             </div>

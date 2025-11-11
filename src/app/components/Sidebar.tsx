@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -16,7 +17,7 @@ import {
 } from "react-icons/fi";
 
 const menuItems = [
-    { label: "Dashboard", icon: <FiHome />, href: "/dashboard" },
+    { label: "Dashboard", icon: <FiHome />, href: "/dashboard/view" },
     {
         label: "Borrow / Return",
         icon: <FiActivity />,
@@ -76,13 +77,20 @@ export default function Sidebar() {
 
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                     <div className="flex items-center gap-3 overflow-hidden">
-                        <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white font-semibold flex items-center justify-center shadow-md">
-                            IK
+                        <div className="relative h-16 w-36 overflow-hidden rounded-2xl shadow-inner">
+                            <Image
+                                src="/logo.png"
+                                alt="Irekeka logo"
+                                fill
+                                sizes="90px"
+                                className="object-contain "
+                                priority
+                            />
                         </div>
                         {!collapsed && (
                             <div className="flex flex-col">
                                 <span className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-500">
-                                    Irekeka
+                                    Irekeka イレーケカ
                                 </span>
                                 <span className="font-semibold text-lg text-gray-900">
                                     Operations Hub
