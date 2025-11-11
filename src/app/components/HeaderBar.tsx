@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { AUTH_COOKIE } from "@/lib/auth";
 import { useEffect, useState } from "react";
 
 const formatClock = (date: Date) =>
@@ -53,13 +54,12 @@ export default function HeaderBar() {
                 </p>
                 <p className="text-base font-semibold text-gray-900">
                     {greeting}{" "}
-                    <span className="text-gray-500">
-                        {user?.Fname ? `${user?.Fname} ${user?.Lname ?? ""}` : ""}
-                    </span>
+
                 </p>
             </div>
 
             <div className="flex items-center gap-3">
+                <span className="text-gray-500 text-sm font-semibold">Admin</span>
                 <div className="relative h-10 w-10 overflow-hidden rounded-full border border-gray-200 bg-gray-50">
                     <Image
                         src="/emp.png"
@@ -70,6 +70,17 @@ export default function HeaderBar() {
                         className="object-cover"
                     />
                 </div>
+
+                <button
+                    onClick={() => {
+                        document.cookie = `${AUTH_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
+                        localStorage.removeItem("user");
+                        window.location.href = "/login";
+                    }}
+                    className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+                >
+                    ออกจากระบบ
+                </button>
             </div>
         </header>
     );

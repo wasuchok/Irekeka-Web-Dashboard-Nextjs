@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev -p 4000",
     "build": "next build",
-    "start": "next start -p 4000"
+    "start": "next start -p 4000",
+    "api": "tsx src/server.ts"
   },
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.19",
@@ -16,9 +17,12 @@
     "axios": "^1.12.2",
     "chart.js": "^4.5.1",
     "dayjs": "^1.11.18",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
     "framer-motion": "^12.23.22",
     "hashids": "^2.3.0",
     "i": "^0.3.7",
+    "input-otp": "^1.4.2",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "lottie-react": "^2.4.1",
@@ -37,14 +41,17 @@
     "react-switch": "^7.1.0",
     "recharts": "^3.2.1",
     "sass": "^1.93.2",
+    "sequelize": "^6.37.7",
     "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.23.0",
     "tailwind-merge": "^3.3.1",
+    "tedious": "^18.6.1",
     "typewriter-effect": "^2.22.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/express": "^5.0.5",
     "@types/fullcalendar": "^3.8.0",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
@@ -53,6 +60,7 @@
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

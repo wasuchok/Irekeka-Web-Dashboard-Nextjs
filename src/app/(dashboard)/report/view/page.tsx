@@ -256,7 +256,7 @@ export default function Page() {
                 <SearchDynamicHeader
                     onSearch={handleSearch}
                     onReset={handleReset}
-                    onCreate={handleCreate}
+
                     fields={fields}
                 />
             </div>

@@ -12,7 +12,6 @@ import {
     FiChevronLeft,
     FiChevronRight,
     FiHome,
-    FiLogOut,
     FiMenu
 } from "react-icons/fi";
 
@@ -186,22 +185,7 @@ export default function Sidebar() {
                     })}
                 </nav>
 
-                <div className="p-4 border-t border-gray-100">
-                    <button
-                        className="w-full flex items-center gap-3 rounded-2xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-                        onClick={() => window.location.assign("/logout")}
-                    >
-                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-500">
-                            <FiLogOut />
-                        </span>
-                        {!collapsed && (
-                            <div className="flex flex-col text-left">
-                                <span className="text-gray-900 font-semibold">Sign out</span>
-                                <span className="text-xs text-gray-500">Log off from this session</span>
-                            </div>
-                        )}
-                    </button>
-                </div>
+
             </aside>
 
             {/* ปุ่มปิด sidebar บนมือถือ */}
