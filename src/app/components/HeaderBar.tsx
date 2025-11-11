@@ -1,11 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { FiBell, FiPlus, FiSearch } from "react-icons/fi";
 import { IMAGE_URL } from "../config/variable";
+
+const formatClock = (date: Date) =>
+    new Intl.DateTimeFormat("en-GB", {
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+    }).format(date);
+
+const resolveGreeting = (hours: number) => {
+    if (hours < 12) return "Good Morning";
+    if (hours < 18) return "Good Afternoon";
+    return "Good Evening";
+};
 
 export default function HeaderBar() {
     const [user, setUser] = useState<any>();
     const [mounted, setMounted] = useState(false);
+    const [clock, setClock] = useState<string>("");
+    const [greeting, setGreeting] = useState<string>("");
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -17,35 +33,40 @@ export default function HeaderBar() {
                 setUser(null);
             }
         }
+        const updateClock = () => {
+            const now = new Date();
+            setClock(formatClock(now));
+            setGreeting(resolveGreeting(now.getHours()));
+        };
+        updateClock();
+        const interval = setInterval(updateClock, 60_000);
         setMounted(true);
+        return () => clearInterval(interval);
     }, []);
 
     if (!mounted) return null;
 
     return (
-        <header className="h-16 sm:h-20 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center justify-end px-4 sm:px-6">
-            <div className="flex items-center gap-3">
+        <header className="h-20 sm:h-24 bg-white border-b border-gray-100 px-4 sm:px-6 flex items-center justify-between">
+            <div className="flex flex-col">
+                <p className="text-[11px] uppercase tracking-[0.4em] text-gray-400 font-semibold">
+                    {clock || "—"}
+                </p>
+                <p className="text-base font-semibold text-gray-900">
+                    {greeting}{" "}
+                    <span className="text-gray-500">
+                        {user?.Fname ? `${user?.Fname} ${user?.Lname ?? ""}` : ""}
+                    </span>
+                </p>
+            </div>
 
+            <div className="flex items-center gap-3">
                 <div className="relative flex items-center justify-center">
                     <img
                         src={`${IMAGE_URL}/emp_pic/660042.jpg`}
                         alt="avatar"
-                        className="rounded-full w-8 h-8 sm:w-9 sm:h-9 border border-gray-200"
+                        className="rounded-full w-10 h-10 border border-gray-200 object-cover"
                     />
-                    <span className="absolute -bottom-1 -right-1 flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                </div>
-
-
-                <div className="flex flex-col items-start leading-tight min-w-0">
-                    <div className="font-medium text-gray-900 text-sm truncate max-w-[120px] sm:max-w-[180px]">
-                        {user?.Fname} {user?.Lname}
-                    </div>
-                    <div className="text-xs text-gray-500 hidden sm:block">
-                        ทีม {user?.Sect}
-                    </div>
                 </div>
             </div>
         </header>
