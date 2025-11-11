@@ -19,9 +19,7 @@ import {
     FiBookOpen,
     FiClock,
     FiDownloadCloud,
-    FiRefreshCw,
-    FiTrendingDown,
-    FiTrendingUp,
+    FiRefreshCw
 } from "react-icons/fi";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Tooltip, Legend, Filler);
@@ -78,10 +76,7 @@ interface StatCardMeta {
     label: string;
     subLabel: string;
     icon: React.ReactNode;
-    trend: {
-        value: string;
-        isPositive: boolean;
-    };
+
 }
 
 const STAT_CARD_META: StatCardMeta[] = [
@@ -89,28 +84,28 @@ const STAT_CARD_META: StatCardMeta[] = [
         key: "totalEquipments",
         label: "Total Equipments",
         subLabel: "Active items in the system",
-        trend: { value: "+8% this month", isPositive: true },
+
         icon: <FiBookOpen className="text-2xl text-primary-600" />,
     },
     {
         key: "borrowed",
         label: "Borrowed",
         subLabel: "Checked-out right now",
-        trend: { value: "+4 from yesterday", isPositive: true },
+
         icon: <FiClock className="text-2xl text-primary-600" />,
     },
     {
         key: "lateReturns",
         label: "Late Returns",
         subLabel: "Require follow-up",
-        trend: { value: "-3 overdue week", isPositive: true },
+
         icon: <FiAlertCircle className="text-2xl text-primary-600" />,
     },
     {
         key: "maintenance",
         label: "Maintenance",
         subLabel: "In repair process",
-        trend: { value: "+2 scheduled", isPositive: false },
+
         icon: <FiRefreshCw className="text-2xl text-primary-600" />,
     },
 ];
@@ -331,7 +326,10 @@ const DashboardPage = () => {
 
     return (
         <div className="space-y-6">
-            <header className="flex flex-col gap-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between">
+            <header
+                className="flex flex-col gap-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm md:flex-row md:items-center md:justify-between"
+                data-aos="fade-down"
+            >
                 <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.4em] text-primary-500">Dashboard</p>
                     <h1 className="text-3xl font-semibold text-gray-900">Equipment overview</h1>
@@ -357,10 +355,12 @@ const DashboardPage = () => {
             )}
 
             <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {statCards.map((card) => (
+                {statCards.map((card, index) => (
                     <article
                         key={card.label}
                         className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md"
+                        data-aos="zoom-in"
+                        data-aos-delay={index * 80}
                     >
                         <div className="flex items-start justify-between">
                             <div>
@@ -371,17 +371,14 @@ const DashboardPage = () => {
                         </div>
                         <div className="mt-4 flex items-center justify-between text-xs font-medium text-gray-500">
                             <span>{card.subLabel}</span>
-                            <span className={card.trend.isPositive ? "text-emerald-600" : "text-rose-500"}>
-                                {card.trend.isPositive ? <FiTrendingUp className="inline" /> : <FiTrendingDown className="inline" />}{" "}
-                                {card.trend.value}
-                            </span>
+
                         </div>
                     </article>
                 ))}
             </section>
 
             <section className="grid gap-6 lg:grid-cols-2">
-                <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm" data-aos="fade-up">
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-lg font-semibold text-gray-900">Borrowing trend</h2>
@@ -396,7 +393,7 @@ const DashboardPage = () => {
                     </div>
                 </article>
 
-                <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm" data-aos="fade-up" data-aos-delay="120">
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-lg font-semibold text-gray-900">Return compliance</h2>
@@ -430,10 +427,10 @@ const DashboardPage = () => {
             </section>
 
             <section className="grid gap-6 lg:grid-cols-2">
-                <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm" data-aos="fade-up">
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-semibold text-gray-900">Upcoming returns</h2>
-                        <button className="text-sm font-semibold text-blue-600 hover:underline">View all</button>
+
                     </div>
                     {upcoming.length === 0 && !loading ? (
                         <p className="mt-6 text-sm text-gray-500">ยังไม่มีรายการที่จะครบกำหนด</p>
@@ -470,7 +467,7 @@ const DashboardPage = () => {
                     )}
                 </article>
 
-                <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                <article className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm" data-aos="fade-left" data-aos-delay="120">
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-semibold text-gray-900">Alerts & focus</h2>
                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">This week</span>
@@ -488,10 +485,10 @@ const DashboardPage = () => {
                                     </div>
                                     <span
                                         className={`text-lg font-bold ${alert.tone === "amber"
-                                                ? "text-amber-500"
-                                                : alert.tone === "purple"
-                                                    ? "text-purple-500"
-                                                    : "text-blue-600"
+                                            ? "text-amber-500"
+                                            : alert.tone === "purple"
+                                                ? "text-purple-500"
+                                                : "text-blue-600"
                                             }`}
                                     >
                                         {alert.value}

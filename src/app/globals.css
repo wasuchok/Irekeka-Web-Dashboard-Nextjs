@@ -24,6 +24,67 @@
     animation: fadeIn 0.5s ease-in-out forwards;
 }
 
+@keyframes splash-fade-in {
+    0% {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes splash-scale-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes splash-slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-splash-fade {
+    animation: splash-fade-in 0.6s ease both;
+}
+
+.animate-splash-scale {
+    animation: splash-scale-in 0.5s ease both;
+}
+
+.animate-splash-slide {
+    animation: splash-slide-up 0.8s ease both;
+}
+
+@keyframes splash-bar {
+    0% {
+        transform: translateX(-100%);
+    }
+    50% {
+        transform: translateX(30%);
+    }
+    100% {
+        transform: translateX(120%);
+    }
+}
+
+.animate-splash-bar {
+    animation: splash-bar 1.4s ease-in-out infinite;
+}
+
 /* Custom Scrollbar สำหรับ Webkit Browsers (Chrome, Safari, Edge) */
 *::-webkit-scrollbar {
     width: 6px;

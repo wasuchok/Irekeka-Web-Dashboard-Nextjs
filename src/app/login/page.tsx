@@ -3,8 +3,8 @@
 import { AUTH_COOKIE } from "@/lib/auth";
 import { OTPInput } from "input-otp";
 import Image from "next/image";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 const REQUIRED_CODE = process.env.NEXT_PUBLIC_DASHBOARD_PIN || "000000";
 
@@ -14,7 +14,7 @@ const setAuthCookie = () => {
 
 const hasAuthCookie = () => document.cookie.split("; ").some((c) => c.startsWith(`${AUTH_COOKIE}=`));
 
-export default function LoginPage() {
+function LoginPageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectPath = searchParams.get("redirect") || "/dashboard/view";
@@ -114,5 +114,13 @@ export default function LoginPage() {
                 </form>
             </div>
         </main>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <LoginPageInner />
+        </Suspense>
     );
 }

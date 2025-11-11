@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { AUTH_COOKIE } from "./lib/auth";
 const PUBLIC_PATHS = ["/login", "/favicon.ico"];
 
@@ -18,7 +18,7 @@ export function middleware(req: NextRequest) {
     if (isPublicPath) {
         if (pathname === "/login" && authToken) {
             const redirectUrl = req.nextUrl.clone();
-            redirectUrl.pathname = "/dashboard";
+            redirectUrl.pathname = "/dashboard/view";
             return NextResponse.redirect(redirectUrl);
         }
         return NextResponse.next();
