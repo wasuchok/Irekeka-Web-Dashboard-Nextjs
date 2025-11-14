@@ -94,12 +94,12 @@ export default function Page() {
                 setRecords(response.data.data || []);
             } else {
                 setRecords([]);
-                setError("ไม่สามารถโหลดข้อมูลคำขอเร่งด่วนได้ในขณะนี้");
+                setError("Unable to load urgent report data right now.");
                 console.error("Invalid success flag", response.data);
             }
         } catch (err) {
             setRecords([]);
-            setError("เกิดข้อผิดพลาดขณะดึงข้อมูลคำขอเร่งด่วน");
+            setError("An error occurred while fetching urgent report data.");
             console.error("Fetch urgent admin error:", err);
         } finally {
             setLoading(false);
@@ -111,17 +111,17 @@ export default function Page() {
     }, [fetchUrgentRecords]);
 
     const fields = [
-        { accessor: "user_out", header: "รหัสผู้ขอ", type: "text" },
+        { accessor: "user_out", header: "Requester ID", type: "text" },
         {
             accessor: "status",
-            header: "สถานะ",
+            header: "Status",
             type: "dropdown",
             enumValues: [
-                { label: "ยังไม่คืน", value: "borrowed" },
-                { label: "คืนแล้ว", value: "returned" },
+                { label: "Not Returned", value: "borrowed" },
+                { label: "Returned", value: "returned" },
             ],
         },
-        { accessor: "date_out", header: "ออกวันที่", type: "date-range" },
+        { accessor: "date_out", header: "Date Out", type: "date-range" },
     ];
 
     const columns = [
@@ -136,19 +136,19 @@ export default function Page() {
             width: "160px",
         },
         {
-            header: "ผู้ขอ",
+            header: "Requester",
             accessor: "user_out_name" as const,
             width: "200px",
             render: (value: string | null) => value || "-",
         },
         {
-            header: "แผนก",
+            header: "Department",
             accessor: "user_out_section" as const,
             width: "140px",
             render: (value: string | null) => value || "-",
         },
         {
-            header: "สถานะ",
+            header: "Status",
             accessor: "status" as const,
             width: "140px",
             render: (value: string | null) => {
@@ -157,25 +157,25 @@ export default function Page() {
                 if (isReturned) {
                     return (
                         <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
-                            คืนแล้ว
+                            Returned
                         </span>
                     );
                 }
                 return (
                     <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">
-                        ยังไม่คืน
+                        Not Returned
                     </span>
                 );
             },
         },
         {
-            header: "ออกวันที่",
+            header: "Date Out",
             accessor: "date_out" as const,
             width: "140px",
             render: (value: string | null) => formatDate(value),
         },
         {
-            header: "เข้าวันที่",
+            header: "Date In",
             accessor: "date_in" as const,
             width: "140px",
             render: (value: string | null, row?: UrgentRecord) => {
@@ -183,32 +183,32 @@ export default function Page() {
                 if (!value || !hasReturnInfo) {
                     return (
                         <span className="font-semibold text-red-600">
-                            ยังไม่คืน
+                            Not returned
                         </span>
                     );
                 }
                 return (
                     <span className="flex flex-col text-sm font-semibold text-gray-900">
                         <span>{formatDate(value)}</span>
-                        <span className="text-xs text-gray-500">คืนแล้ว</span>
+                        <span className="text-xs text-gray-500">Returned</span>
                     </span>
                 );
             },
         },
         {
-            header: "จำนวนวัน",
+            header: "Borrow Days",
             accessor: "num_date" as const,
             width: "120px",
             render: (value: number | null) => formatDays(value),
         },
         {
-            header: "ผู้คืน",
+            header: "Returned By",
             accessor: "user_in_name" as const,
             width: "180px",
             render: (value: string | null) => value || "-",
         },
         {
-            header: "ภาพ",
+            header: "Photo",
             accessor: "image_url" as const,
             width: "120px",
             render: (value: string | null, row?: UrgentRecord) => {
@@ -241,11 +241,10 @@ export default function Page() {
             <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
                 <div>
                     <p className="text-lg font-semibold text-gray-900">
-                        รายงานคำขอเร่งด่วน
+                        Urgent Borrow Report
                     </p>
                     <p className="text-sm text-gray-500">
-                        แสดงรายการอุปกรณ์ที่ยังไม่ได้คืน พร้อมสถานะจากระบบ
-                        Admin
+                        Displays urgent borrow requests that are still outstanding, powered by the admin service.
                     </p>
                 </div>
                 <button
@@ -254,7 +253,7 @@ export default function Page() {
                     disabled={loading}
                     className="inline-flex items-center justify-center rounded-md border border-primary-600 px-4 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    {loading ? "กำลังโหลด..." : "รีเฟรช"}
+                    {loading ? "Loading..." : "Refresh"}
                 </button>
             </div>
 
@@ -278,9 +277,7 @@ export default function Page() {
             </div>
 
             {error && (
-                <p className="text-sm font-medium text-red-600">
-                    {error}
-                </p>
+            <p className="text-sm font-medium text-red-600">{error}</p>
             )}
         </div>
     );

@@ -19,14 +19,6 @@ interface SearchField {
     fields?: any;
 }
 
-interface SearchDynamicHeaderProps {
-    onUpload?: () => void;
-    onCreate?: () => void;
-    onExport?: () => void;
-    onSearch: (values: Record<string, any>) => void;
-    onReset: () => void;
-    fields: SearchField[];
-}
 
 export default function SearchDynamicHeader({
 
@@ -36,7 +28,7 @@ export default function SearchDynamicHeader({
     onSearch,
     onReset,
     fields
-}: SearchDynamicHeaderProps) {
+}: any) {
 
     const [formData, setFormData] = useState<Record<string, any>>({});
 
@@ -98,7 +90,7 @@ export default function SearchDynamicHeader({
                 onSubmit={handleSubmit}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-center gap-4"
             >
-                {fields.map((field) => {
+                {fields.map((field: any) => {
                     const { accessor, header, type, enumValues } = field;
 
                     switch (type) {
