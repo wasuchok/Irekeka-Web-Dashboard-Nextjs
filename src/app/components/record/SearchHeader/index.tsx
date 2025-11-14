@@ -15,18 +15,17 @@ interface SearchField {
     accessor: string;
     header: string;
     type: "text" | "dropdown" | "between" | "date" | "date-range";
-    enumValues?: string[];
-    fields: any
+    enumValues?: Array<string | { label: string; value: string }>;
+    fields?: any;
 }
 
 interface SearchDynamicHeaderProps {
-
     onUpload?: () => void;
     onCreate?: () => void;
     onExport?: () => void;
     onSearch: (values: Record<string, any>) => void;
     onReset: () => void;
-    fields: any
+    fields: SearchField[];
 }
 
 export default function SearchDynamicHeader({
@@ -99,7 +98,7 @@ export default function SearchDynamicHeader({
                 onSubmit={handleSubmit}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-center gap-4"
             >
-                {fields.map((field: any) => {
+                {fields.map((field) => {
                     const { accessor, header, type, enumValues } = field;
 
                     switch (type) {
@@ -121,11 +120,10 @@ export default function SearchDynamicHeader({
                                     key={accessor}
                                     label={header}
                                     value={formData[accessor] || ""}
-                                    options={(field.enumValues || []).map(
-                                        (v: any) => ({
-                                            label: v,
-                                            value: v,
-                                        })
+                                    options={(enumValues || []).map((v: any) =>
+                                        typeof v === "string"
+                                            ? { label: v, value: v }
+                                            : v
                                     )}
                                     onChange={(val) =>
                                         handleChange(accessor, val)
@@ -157,7 +155,9 @@ export default function SearchDynamicHeader({
                                         label={`(ถึง)`}
                                         placeholder="ถึง"
                                         type="number"
-                                        value={formData[`${accessor}_to`] || ""}
+                                        value={
+                                            formData[`${accessor}_to`] || ""
+                                        }
                                         onChange={(e) =>
                                             handleChange(
                                                 `${accessor}_to`,
@@ -167,7 +167,55 @@ export default function SearchDynamicHeader({
                                     />
                                 </div>
                             );
-
+                        case "date":
+                            return (
+                                <TextField
+                                    key={accessor}
+                                    label={header}
+                                    placeholder="เลือกวันที่"
+                                    type="date"
+                                    value={formData[accessor] || ""}
+                                    onChange={(e) =>
+                                        handleChange(accessor, e.target.value)
+                                    }
+                                />
+                            );
+                        case "date-range":
+                            return (
+                                <div
+                                    key={accessor}
+                                    className="grid grid-cols-2 gap-2"
+                                >
+                                    <TextField
+                                        label={`${header} (จาก)`}
+                                        placeholder="เลือกวันที่"
+                                        type="date"
+                                        value={
+                                            formData[`${accessor}_from`] || ""
+                                        }
+                                        onChange={(e) =>
+                                            handleChange(
+                                                `${accessor}_from`,
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                    <TextField
+                                        label={`${header} (ถึง)`}
+                                        placeholder="เลือกวันที่"
+                                        type="date"
+                                        value={
+                                            formData[`${accessor}_to`] || ""
+                                        }
+                                        onChange={(e) =>
+                                            handleChange(
+                                                `${accessor}_to`,
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                </div>
+                            );
 
                         default:
                             return null;
