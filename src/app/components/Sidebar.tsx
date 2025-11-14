@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
     FiActivity,
+    FiAlertOctagon,
     FiCalendar,
     FiChevronDown,
     FiChevronLeft,
@@ -25,6 +26,14 @@ const menuItems = [
         hasSubMenu: false,
         subMenu: [],
     },
+    {
+        label: "Borrow / Return (Urgent)",
+        icon: <FiAlertOctagon />,
+        href: "/report-urgent",
+        navigate: "/report-urgent/view",
+        hasSubMenu: false,
+        subMenu: [],
+    },
     { label: "Stock Center", icon: <FiCalendar />, href: "/stock/view" },
 ];
 
@@ -38,6 +47,7 @@ export default function Sidebar() {
         if (href === "/report") return pathname === href || pathname.startsWith("/report/");
         if (href === "/stock") return pathname === href || pathname.startsWith("/stock/");
         if (href === "/dashboard") return pathname === href || pathname.startsWith("/dashboard/");
+        if (href === "/report-urgent") return pathname === href || pathname.startsWith("/report-urgent/");
         if (href === "/settings") return pathname === href || pathname.startsWith("/settings/");
         return pathname === href;
     };
